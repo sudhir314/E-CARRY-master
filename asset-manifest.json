@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.css": "/Shopease/static/css/main.19b11e37.css",
+    "main.js": "/Shopease/static/js/main.a56f53a9.js",
+    "static/media/logo.png": "/Shopease/static/media/logo.d164916804d6445f64dc.png",
+    "index.html": "/Shopease/index.html",
+    "main.19b11e37.css.map": "/Shopease/static/css/main.19b11e37.css.map",
+    "main.a56f53a9.js.map": "/Shopease/static/js/main.a56f53a9.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.19b11e37.css",
+    "static/js/main.a56f53a9.js"
+  ]
+}
