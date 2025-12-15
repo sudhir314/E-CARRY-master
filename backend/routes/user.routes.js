@@ -3,6 +3,7 @@ const UserRouter = express.Router();
 const { UserModel } = require("../model/user.model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+require("dotenv").config(); // Load environment variables
 
 UserRouter.post("/login", async (req, res) => {
   const { email, password } = req.body;
@@ -11,13 +12,13 @@ UserRouter.post("/login", async (req, res) => {
     if (user.length > 0) {
       bcrypt.compare(password, user[0].password, async (err, result) => {
         if (result) {
-          const token = jwt.sign({ userID: user[0]._id }, "masai");
+          // FIXED: Using the secret key from Render environment variable
+          const token = jwt.sign({ userID: user[0]._id }, process.env.JWT_SECRET);
           
-          // UPDATED: Sending isAdmin status and Name to frontend
           res.send({ 
             msg: "logged in successfully", 
             token: token,
-            isAdmin: user[0].isAdmin || false, // Default to false if missing
+            isAdmin: user[0].isAdmin || false, 
             name: user[0].name
           });
         } else {
@@ -43,8 +44,6 @@ UserRouter.post("/register", async (req, res) => {
         if (err) {
           res.send({ msg: "Something went wrong" });
         } else {
-          // By default, everyone registers as a normal user (isAdmin: false)
-          // You will manually change YOUR status to true in MongoDB later.
           const user = UserModel({ 
             name, 
             email, 
