@@ -23,14 +23,17 @@ export default function Login() {
   const navigate = useNavigate();
   const toast = useToast();
   
+  // UPDATED: Render Backend URL
+  const BASE_URL = "https://shopease-backend-8m20.onrender.com";
+
   const handleSubmit = () => {
     const payload = {
       email,
       password,
     };
     
-    // UPDATED: Using Computer IP 192.168.5.207
-    fetch(`http://192.168.5.207:8080/user/login`, {
+    // UPDATED: Using Render URL
+    fetch(`${BASE_URL}/user/login`, {
       method: "POST",
       body: JSON.stringify(payload),
       headers: {

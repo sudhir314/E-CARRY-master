@@ -9,6 +9,9 @@ import {
   POST_ADDRESS,
 } from "./actionTypes"
 
+// UPDATED: Live Backend URL (Render)
+const BASE_URL = "https://shopease-backend-8m20.onrender.com";
+
 const getProdcutRequestAction = () => {
   return { type: GET_PRODUCT_REQUEST }
 }
@@ -37,11 +40,11 @@ export const getUserAddressAction = () => {
   return { type: GET_ADDRESS }
 }
 
-// UPDATED: Using Computer IP 192.168.5.207
+// UPDATED: Now using BASE_URL
 export const getWatches = (param) => (dispatch) => {
   dispatch(getProdcutRequestAction())
   axios
-    .get(`http://192.168.5.207:8080/products/`, param) 
+    .get(`${BASE_URL}/products/`, param)
     .then((res) => {
       console.log(res.data)
       dispatch(getProdcutSuccessAction(res.data))
@@ -51,18 +54,18 @@ export const getWatches = (param) => (dispatch) => {
     })
 }
 
-// UPDATED: Using Computer IP 192.168.5.207
+// UPDATED: Now using BASE_URL
 export const getsingleProduct = (id) => (dispatch) => {
-  axios.get(`http://192.168.5.207:8080/products/${id}`).then((res) => {
+  axios.get(`${BASE_URL}/products/${id}`).then((res) => {
     console.log(res.data)
     dispatch(getSingleProdcutAction(res.data))
   })
 }
 
-// UPDATED: Using Computer IP 192.168.5.207
+// UPDATED: Now using BASE_URL
 export const postuserAddress = (userAddress) => (dispatch) => {
   axios
-    .post(`http://192.168.5.207:8080/user/address`, userAddress)
+    .post(`${BASE_URL}/user/address`, userAddress)
     .then((res) => {
       console.log(res.data)
       dispatch(postUserAddressAction(res.data))
@@ -72,11 +75,11 @@ export const postuserAddress = (userAddress) => (dispatch) => {
     })
 }
 
-// UPDATED: Using Computer IP 192.168.5.207
+// UPDATED: Now using BASE_URL
 export const getuserAddress = () => (dispatch) => {
   dispatch(postUserAddressAction())
   axios
-    .get(`http://192.168.5.207:8080/user/address`)
+    .get(`${BASE_URL}/user/address`)
     .then((res) => {
       // console.log(res.data)
       dispatch(getUserAddressAction())

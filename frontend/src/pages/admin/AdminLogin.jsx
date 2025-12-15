@@ -19,28 +19,27 @@ import axios from "axios";
 export default function AdminLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState(""); // Added for registration
-  const [isRegistering, setIsRegistering] = useState(false); // Toggle state
+  const [name, setName] = useState(""); 
+  const [isRegistering, setIsRegistering] = useState(false); 
   let navigate = useNavigate();
   const toast = useToast();
 
+  // UPDATED: Live Backend URL
+  const BASE_URL = "https://shopease-backend-8m20.onrender.com";
+
   const handleSubmit = () => {
-    // 1. Determine if we are logging in or registering
     const endpoint = isRegistering ? "register" : "login";
     
-    // 2. Prepare the data to send
     const payload = isRegistering 
       ? { name, email, password } 
       : { email, password };
 
-    // 3. Send Request to Backend
-    // UPDATED: Using Computer IP 192.168.5.207
+    // UPDATED: Using Render URL
     axios
-      .post(`http://192.168.5.207:8080/admin/${endpoint}`, payload)
+      .post(`${BASE_URL}/admin/${endpoint}`, payload)
       .then((res) => {
         console.log(res.data);
         
-        // Scenario A: Login Success (Backend sends a token)
         if (res.data.token) {
           toast({
             title: "Logged in Successfully",
@@ -48,9 +47,10 @@ export default function AdminLogin() {
             duration: 3000,
             isClosable: true,
           });
+          // Store admin token if needed, or just navigate
+          localStorage.setItem("adminToken", res.data.token); 
           navigate(`/admin`);
         } 
-        // Scenario B: Registration Success (Backend sends a msg)
         else if (res.data.msg && (res.data.msg.includes("registered") || res.data.msg.includes("success"))) {
            toast({
             title: "Admin Registered!",
@@ -59,9 +59,8 @@ export default function AdminLogin() {
             duration: 3000,
             isClosable: true,
           });
-          setIsRegistering(false); // Switch user back to Login view
+          setIsRegistering(false); 
         } 
-        // Scenario C: Error from Backend (e.g., Wrong password)
         else {
           toast({
             title: res.data.msg || "Error",
@@ -75,7 +74,7 @@ export default function AdminLogin() {
         console.log(err);
         toast({
           title: "Connection Failed",
-          description: "Ensure the Backend Server is running on port 8080",
+          description: "Ensure the Backend Server is running.",
           status: "error",
           duration: 3000,
           isClosable: true,
@@ -106,7 +105,6 @@ export default function AdminLogin() {
           p={8}
         >
           <Stack spacing={4}>
-            {/* Show Name field only if registering */}
             {isRegistering && (
                 <FormControl id="name">
                 <FormLabel>Name</FormLabel>
@@ -153,7 +151,6 @@ export default function AdminLogin() {
                 {isRegistering ? "Register" : "Login"}
               </Button>
               
-              {/* Toggle Button */}
               <Text align="center" fontSize="sm">
                   {isRegistering ? "Already have an account?" : "Need an Admin account?"}{" "}
                   <Button variant="link" color="blue.400" onClick={() => setIsRegistering(!isRegistering)}>

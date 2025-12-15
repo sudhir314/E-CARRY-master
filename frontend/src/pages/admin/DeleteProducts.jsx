@@ -6,9 +6,14 @@ import ProductItems from "./ProductItems"
 function DeleteProducts() {
   const [data, setData] = useState([])
   const [count, setCount] = useState(0)
+
+  // UPDATED: Live Backend URL
+  const BASE_URL = "https://shopease-backend-8m20.onrender.com";
+
   const handleDelete = (id) => {
+    // Fixed: Using Render URL instead of Cyclic
     axios
-      .delete(`https://vast-erin-badger-wear.cyclic.app/products/delete/${id}`)
+      .delete(`${BASE_URL}/products/delete/${id}`)
       .then((res) => {
         setCount(count + 1)
       })
@@ -18,8 +23,9 @@ function DeleteProducts() {
   }
 
   useEffect(() => {
+    // Fixed: Using Render URL instead of Cyclic
     axios
-      .get("https://vast-erin-badger-wear.cyclic.app/products")
+      .get(`${BASE_URL}/products`)
       .then((res) => {
         setData(res.data)
       })

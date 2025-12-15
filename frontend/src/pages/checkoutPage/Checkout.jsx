@@ -1,79 +1,36 @@
-import React from "react";
-
+import React, { useEffect } from "react";
 import { Heading, useDisclosure } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
-import { Button, ButtonGroup } from "@chakra-ui/react";
-import { Navigate, useNavigate } from "react-router-dom";
-
-import { DeleteIcon } from "@chakra-ui/icons";
-import { Input, InputGroup, InputRightElement, Text } from "@chakra-ui/react";
+import { Button } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
+import { Text } from "@chakra-ui/react";
 import {
   Accordion,
   AccordionItem,
   AccordionButton,
-  AccordionPanel,
-  AccordionIcon,
   Box,
 } from "@chakra-ui/react";
-import {
-  List,
-  ListItem,
-  ListIcon,
-  OrderedList,
-  UnorderedList,
-} from "@chakra-ui/react";
 
-import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  FormControl,
-  FormLabel,
-} from "@chakra-ui/react";
-
-import { getuserAddress, postuserAddress } from "../../redux/appReducer/action";
-import { useEffect } from "react";
-
-// const initAdress={
-//   FullName:"",
-//   EmailAddress :"",
-//   Pincode : "",
-//   City:"",
-//   State :"",
-//   Countery:"",
-//   FlatNumber : "",
-//   Area:"",
-//   Landmark : "",
-// }
+import { getuserAddress } from "../../redux/appReducer/action";
 
 const Checkout = () => {
   const navigate = useNavigate();
-
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
-  const initialRef = React.useRef(null);
-  const finalRef = React.useRef(null);
-
+  // const { isOpen, onOpen, onClose } = useDisclosure(); // Modal unused for now
+  
   const dispatch = useDispatch();
-  // const ItemCount =useSelector((store)=>store.cartReducer.Count)
   const userAddress = useSelector((store) => store.appReducer.userAddress);
-  // const [userAddress,setUserAdress]= React.useState(initAdress)
 
-  // console.log(ItemCount)
+  // FIXED: Added useEffect to actually fetch the data
+  useEffect(() => {
+    dispatch(getuserAddress());
+  }, [dispatch]);
 
-  // const handleChange=(e)=>{
-
-  //   setUserAdress({...userAddress,[e.target.name]:[e.target.value]})
-  // }
-  console.log(userAddress);
+  console.log("Current User Address:", userAddress);
 
   const handllePayment = () => {
     navigate("/payment");
   };
+
   return (
     <div style={{ marginBottom: "20%" }}>
       <div
@@ -90,7 +47,7 @@ const Checkout = () => {
         <Heading>CHECKOUT</Heading>
       </div>
 
-      <div style={{ display: "flex" }}>
+      <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
         <div
           style={{
             width: "50%",
@@ -99,31 +56,35 @@ const Checkout = () => {
             gap: "20px",
             overflow: "auto",
             borderRight: "2px solid whitesmoke",
+            padding: "20px"
           }}>
           <div
             style={{
               margin: "auto",
               backgroundColor: "whitesmoke",
-              width: "70%",
+              width: "80%",
+              padding: "20px",
+              borderRadius: "8px"
             }}>
-            <Text fontWeight="bold">SHIPPING ADDRESS</Text>
-            <Text>{userAddress.FullName}</Text>
-            <Text>
-              {userAddress.FlatNumber}
-              {","}
-              {userAddress.Area}
-            </Text>
-            <Text>{userAddress.Landmark}</Text>
-            <Text>
-              {userAddress.City}
-              {","} {userAddress.State}
-            </Text>
-            <Text>{userAddress.Pincode}</Text>
+            <Text fontWeight="bold" mb={2}>SHIPPING ADDRESS</Text>
+            {/* Added check to handle empty address */}
+            {userAddress && userAddress.FullName ? (
+                <>
+                    <Text fontWeight="bold">{userAddress.FullName}</Text>
+                    <Text>{userAddress.FlatNumber}, {userAddress.Area}</Text>
+                    <Text>{userAddress.Landmark}</Text>
+                    <Text>{userAddress.City}, {userAddress.State}</Text>
+                    <Text>{userAddress.Pincode}</Text>
+                    <Text mt={2}>Phone: {userAddress.Mobile || "N/A"}</Text>
+                </>
+            ) : (
+                <Text color="red.500">No address found. Please add one in your profile.</Text>
+            )}
           </div>
         </div>
 
-        <div style={{ width: "40%", margin: "auto" }}>
-          <Accordion allowToggle marginTop="50px">
+        <div style={{ width: "40%", margin: "auto", padding: "20px" }}>
+          <Accordion allowToggle defaultIndex={[0]}>
             <AccordionItem>
               <h2>
                 <AccordionButton>
@@ -133,15 +94,14 @@ const Checkout = () => {
                     color={"black"}
                     fontWeight="bold">
                     ORDER SUMMARY
-                    <Box color={"black"} fontWeight="400">
-                      <Box>
-                        {" "}
-                        Item Total (1 Item)
-                        <span style={{ marginLeft: "385px" }}>Rs.1699</span>
+                    <Box color={"black"} fontWeight="400" mt={2}>
+                      <Box display="flex" justifyContent="space-between">
+                        <span>Item Total</span>
+                        <span>Rs.1699</span>
                       </Box>
-                      <Box>
-                        Shipping
-                        <span style={{ marginLeft: "480px" }}>Free</span>
+                      <Box display="flex" justifyContent="space-between">
+                        <span>Shipping</span>
+                        <span>Free</span>
                       </Box>
                     </Box>
                   </Box>
@@ -158,16 +118,12 @@ const Checkout = () => {
                     color={"black"}
                     fontWeight="bold">
                     <Box color={"black"} fontWeight="400">
-                      <Box>
-                        {" "}
-                        Grand Total
-                        <span style={{ marginLeft: "430px" }}>Rs.1699</span>
+                      <Box display="flex" justifyContent="space-between">
+                        <span style={{ fontWeight: "bold" }}>Grand Total</span>
+                        <span style={{ fontWeight: "bold" }}>Rs.1699</span>
                       </Box>
-                      <Box>
-                        (Inclusive of Taxes)
-                        <span style={{ marginLeft: "305px" }}>
-                          You Saved Rs.300
-                        </span>
+                      <Box fontSize="sm" color="green.500" mt={1}>
+                        (Inclusive of Taxes) You Saved Rs.300
                       </Box>
                     </Box>
                   </Box>
@@ -176,70 +132,12 @@ const Checkout = () => {
               <Button
                 onClick={handllePayment}
                 colorScheme="green"
-                width="95%"
+                width="100%"
                 height={"50px"}
-                marginLeft="20px"
+                mt="20px"
                 borderRadius={"0px"}>
-                Checkout
+                Proceed to Payment
               </Button>
-              {/* <Button ml={4} ref={finalRef}>
-          I'll receive focus on close
-        </Button> */}
-              {/* <Modal
-          initialFocusRef={initialRef}
-          finalFocusRef={finalRef}
-          isOpen={isOpen}
-          onClose={onClose}
-        >
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>ADD NEW ADDRESS</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody pb={6}>
-              <FormControl>
-                
-                <Input variant='flushed' name="FullName" ref={initialRef} placeholder='Full name' value={userAddress.FullName}
-                onChange={handleChange} />
-              </FormControl>
-  
-              <FormControl mt={4}>
-            
-                <Input variant='flushed'name="EmailAddress" placeholder='Email Address' value={userAddress.EmailAddress} onChange={handleChange}  />
-              </FormControl>
-              <FormControl mt={4} display='flex' gap={'10px'}>
-              
-                <Input variant='flushed' name="Pincode" placeholder='Pincode' value={userAddress.Pincode} onChange={handleChange}  />
-               
-
-                <Input variant='flushed' name="City" placeholder='City' value={userAddress.City} onChange={handleChange}  />
-                <Input variant='flushed' name="State" placeholder='State' value={userAddress.State}  onChange={handleChange} />
-                <Input variant='flushed' name="Countery" placeholder='Country'value={userAddress.Countery} onChange={handleChange}  />
-              </FormControl>
-              <FormControl mt={4}>
-              <Input variant='flushed' name="FlatNumber" placeholder='Flat No/Building/ Street Name ' value={userAddress.FlatNumber} onChange={handleChange} />
-             </FormControl>
-             <FormControl mt={4}> 
-             <Input variant='flushed' name="Area" placeholder='Area/Locality' value={userAddress.Area} onChange={handleChange} />
-             </FormControl>
-             <FormControl mt={4}> 
-             <Input variant='flushed' name="Landmark" placeholder='Landmark' value={userAddress.Landmark} onChange={handleChange} />
-             </FormControl>
-             <FormControl mt={4}> 
-            <Text>PS. Your information is safe with us, No spam.</Text>
-             </FormControl>
-
-            </ModalBody>
-  
-            <ModalFooter>
-              <Button colorScheme='blue' mr={3}   onClick={handleAddressANdCheckout}
-              
-              >
-              ADD ADDRESS
-              </Button>
-              {/* <Button >Cancel</Button> */}
-              {/* </ModalFooter> */}
-              {/* </ModalContent> */}
-              {/* </Modal> */} *{/* <Button ></Button> */}
             </AccordionItem>
           </Accordion>
         </div>
